@@ -29,10 +29,16 @@ dataset_file = "dataset.csv"
 # Load the dataset
 df = load_data(dataset_file)
 if df is None:
-    st.error(f"❌ '{dataset_file}' not found in the current directory. Please make sure the dataset file is in the same folder as this script.")
-    st.info("💡 You can create a file named `dataset.csv` and paste the CSV dataset into it.")
+    st.error(f"'{dataset_file}' not found in the current directory. Please make sure the dataset file is in the same folder as this script.")
+    st.info(" You can create a file named `dataset.csv` and paste the CSV dataset into it.")
 else:
     # Display dataset info
-    with st.expander("📊 View Training Dataset"):
+    with st.expander(" View Training Dataset"):
         st.dataframe(df, use_container_width=True)
         st.write(f"Total samples: **{len(df)}**")
+     # Train Model Pipeline
+    @st.cache_resource
+    def train_model(data):
+        # We need to fill any NaN values just in case
+        data = data.dropna(subset=['text', 'emoji'])
+            
