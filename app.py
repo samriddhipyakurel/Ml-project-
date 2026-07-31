@@ -24,3 +24,15 @@ def load_data(filepath):
     if not os.path.exists(filepath):
         return None
     return pd.read_csv(filepath)
+# Locate dataset.csv
+dataset_file = "dataset.csv"
+# Load the dataset
+df = load_data(dataset_file)
+if df is None:
+    st.error(f"❌ '{dataset_file}' not found in the current directory. Please make sure the dataset file is in the same folder as this script.")
+    st.info("💡 You can create a file named `dataset.csv` and paste the CSV dataset into it.")
+else:
+    # Display dataset info
+    with st.expander("📊 View Training Dataset"):
+        st.dataframe(df, use_container_width=True)
+        st.write(f"Total samples: **{len(df)}**")
