@@ -59,4 +59,31 @@ else:
         model = train_model(df)
     
     st.success("✅ Model trained successfully!")
+     # User Input Section
+    st.markdown("---")
+    st.subheader("💡 Try it out!")
+    user_input = st.text_input("Enter a sentence to predict its emoji:", placeholder="I want to eat pizza tonight!")
+    if user_input:
+        # Make prediction
+        prediction = model.predict([user_input])[0]
+        
+        # Get probability distribution to show confidence
+        probabilities = model.predict_proba([user_input])[0]
+        classes = model.classes_
+        pred_index = list(classes).index(prediction)
+        confidence = probabilities[pred_index] * 100
+        # Display result
+        st.markdown("### Result:")
+        col1, col2 = st.columns([1, 3])
+        with col1:
+            st.markdown(f"<h1 style='text-align: center; font-size: 80px; margin: 0;'>{prediction}</h1>", unsafe_allow_html=True)
+        with col2:
+            st.markdown(f"**Predicted Emoji:** `{prediction}`")
+            st.markdown(f"**Confidence:** `{confidence:.2f}%`")
+            
+        # Top 3 suggestions
+        top_indices = probabilities.argsort()[-3:][::-1]
+        st.markdown("#### Top 3 Suggestions:")
+        for idx in top_indices:
+            st.write(f"- {classes[idx]} ({probabilities[idx]*100:.1f}%)")
             
