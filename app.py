@@ -41,4 +41,22 @@ else:
     def train_model(data):
         # We need to fill any NaN values just in case
         data = data.dropna(subset=['text', 'emoji'])
+        # Train Model Pipeline
+    @st.cache_resource
+    def train_model(data):
+        # We need to fill any NaN values just in case
+        data = data.dropna(subset=['text', 'emoji'])
+        
+        # Build a pipeline
+        pipeline = Pipeline([
+            ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
+            ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
+        ])
+        
+        pipeline.fit(data['text'], data['emoji'])
+        return pipeline
+    with st.spinner("Training ML Model..."):
+        model = train_model(df)
+    
+    st.success("✅ Model trained successfully!")
             
