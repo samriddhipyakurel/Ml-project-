@@ -16,6 +16,7 @@ st.markdown(
     """
 )
 
+@st.cache_data
 def load_data(filepath="dataset.csv"):
     if not os.path.exists(filepath):
         return None
@@ -30,14 +31,20 @@ else:
         st.dataframe(df, use_container_width=True)
         st.write(f"Total samples: **{len(df)}**")
 
-    df_clean = df.dropna(subset=['text', 'emoji']).copy()
-    df_clean['clean_text'] = df_clean['text'].apply(clean_text)
-    
-    pipeline = Pipeline([
-        ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
-        ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
-    ])
-    pipeline.fit(df_clean['clean_text'], df_clean['emoji'])
+    @st.cache_resource
+    def train_model(data):
+        data_clean = data.dropna(subset=['text', 'emoji']).copy()
+        data_clean['clean_text'] = data_clean['text'].apply(clean_text)
+        
+        pipeline = Pipeline([
+            ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
+            ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
+        ])
+        pipeline.fit(data_clean['clean_text'], data_clean['emoji'])
+        return pipeline
+
+    with st.spinner("Training ML Model..."):
+        pipeline = train_model(df)
     
     st.markdown("---")
     st.subheader("💡 Try it out!")
