@@ -3,6 +3,7 @@ import os
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
+from sklearn.metrics import accuracy_score, classification_report
 from preprocess import clean_text
 
 def load_and_preprocess_data(file_path="dataset.csv"):
@@ -20,12 +21,16 @@ def build_model_pipeline():
         ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
     ])
 
-def train():
+def train_and_evaluate():
     df = load_and_preprocess_data()
     pipeline = build_model_pipeline()
     pipeline.fit(df["clean_text"], df["emoji"])
-    print("Model training completed successfully.")
+    
+    predictions = pipeline.predict(df["clean_text"])
+    acc = accuracy_score(df["emoji"], predictions)
+    print(f"Training Accuracy: {acc * 100:.2f}%")
+    print("\nClassification Report:\n", classification_report(df["emoji"], predictions, zero_division=0))
     return pipeline
 
 if __name__ == "__main__":
-    train()
+    train_and_evaluate()
