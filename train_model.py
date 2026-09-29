@@ -1,5 +1,6 @@
 import pandas as pd
 import os
+import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
@@ -21,7 +22,7 @@ def build_model_pipeline():
         ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
     ])
 
-def train_and_evaluate():
+def train_and_save(model_path="model.pkl"):
     df = load_and_preprocess_data()
     pipeline = build_model_pipeline()
     pipeline.fit(df["clean_text"], df["emoji"])
@@ -29,8 +30,11 @@ def train_and_evaluate():
     predictions = pipeline.predict(df["clean_text"])
     acc = accuracy_score(df["emoji"], predictions)
     print(f"Training Accuracy: {acc * 100:.2f}%")
-    print("\nClassification Report:\n", classification_report(df["emoji"], predictions, zero_division=0))
+    
+    # Save model artifact
+    joblib.dump(pipeline, model_path)
+    print(f"Saved trained model to {model_path}")
     return pipeline
 
 if __name__ == "__main__":
-    train_and_evaluate()
+    train_and_save()
