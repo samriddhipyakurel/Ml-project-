@@ -38,7 +38,7 @@ else:
         
         pipeline = Pipeline([
             ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
-            ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
+            ('clf', LogisticRegression(C=1.0, max_iter=200))
         ])
         pipeline.fit(data_clean['clean_text'], data_clean['emoji'])
         return pipeline

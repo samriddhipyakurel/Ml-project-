@@ -4,7 +4,7 @@ import joblib
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.pipeline import Pipeline
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import accuracy_score
 from preprocess import clean_text
 
 def load_and_preprocess_data(file_path="dataset.csv"):
@@ -19,7 +19,7 @@ def load_and_preprocess_data(file_path="dataset.csv"):
 def build_model_pipeline():
     return Pipeline([
         ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
-        ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
+        ('clf', LogisticRegression(C=1.0, max_iter=200))
     ])
 
 def train_and_save(model_path="model.pkl"):

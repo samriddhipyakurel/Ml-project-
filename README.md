@@ -39,3 +39,6 @@ To run model training offline:
 ```bash
 python train_model.py
 ```
+
+## 📝 License
+This project is open-source and created for machine learning demo and educational purposes.
