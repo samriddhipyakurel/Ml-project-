@@ -1,5 +1,8 @@
 import pandas as pd
 import os
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.linear_model import LogisticRegression
+from sklearn.pipeline import Pipeline
 from preprocess import clean_text
 
 def load_and_preprocess_data(file_path="dataset.csv"):
@@ -9,8 +12,20 @@ def load_and_preprocess_data(file_path="dataset.csv"):
     df = pd.read_csv(file_path)
     df = df.dropna(subset=["text", "emoji"])
     df["clean_text"] = df["text"].apply(clean_text)
-    print(f"Successfully loaded and preprocessed {len(df)} samples.")
     return df
 
-if __name__ == "__main__":
+def build_model_pipeline():
+    return Pipeline([
+        ('tfidf', TfidfVectorizer(ngram_range=(1, 2), stop_words='english', min_df=1)),
+        ('clf', LogisticRegression(C=1.0, max_iter=200, multi_class='multinomial'))
+    ])
+
+def train():
     df = load_and_preprocess_data()
+    pipeline = build_model_pipeline()
+    pipeline.fit(df["clean_text"], df["emoji"])
+    print("Model training completed successfully.")
+    return pipeline
+
+if __name__ == "__main__":
+    train()
